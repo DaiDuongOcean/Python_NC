@@ -19,7 +19,6 @@ def connect_db():
         return None
 
 def create_table(table_name):
-    print("here")
     conn = connect_db()
     if conn:
         try:
