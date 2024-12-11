@@ -98,3 +98,12 @@ class AddTodoScreen(tk.Frame):
         cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10,
                                   command=lambda: self.controller.show_frame("MainScreen"))
         cancel_button.pack(side="left", padx=10)
+
+    # def handle_save_note(self):
+    #     title = title_entry.get()
+    #     content = content_text.get("1.0", tk.END).strip()
+    #     save_note(title, content)
+    #     title_entry.delete(0, tk.END)
+    #     content_text.delete("1.0", tk.END)
+    #     handle_load_notes()
+    #     messagebox.showinfo("Success", "Saved")
