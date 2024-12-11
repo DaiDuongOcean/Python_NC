@@ -1,0 +1,88 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Virtual environment
+venv/
+ENV/
+.env/
+venv.bak/
+*.virtualenv
+
+# Pyenv
+.python-version
+
+# pipenv
+Pipfile
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# Environments
+.env
+.env.*
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+*.out
+*.err
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Test results
+*.pytest_cache/
+*.test
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+
+# Other tools
+*.pylint.d/
+*.tox/
+.tox/
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.bak
+*.old
+*.orig
+
+# Security
+secrets.json
+secrets.yaml
