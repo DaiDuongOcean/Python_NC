@@ -67,7 +67,7 @@ class EditTodoScreen(tk.Frame):
         button_frame = tk.Frame(add_todo_content, bg=bg_color)
         button_frame.pack(pady=10)
 
-        edit_button = tk.Button(button_frame, text="Add", font=("Arial", 12), bg="green", fg="white", width=10, command=self.edit_note)
+        edit_button = tk.Button(button_frame, text="Save", font=("Arial", 12), bg="green", fg="white", width=10, command=self.edit_note)
         edit_button.pack(side="left", padx=10)
 
         cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10, command=lambda: self.controller.show_frame("MainScreen"))
@@ -87,8 +87,16 @@ class EditTodoScreen(tk.Frame):
                 messagebox.showerror("Error", f"Cannot load image: {e}")
 
     def edit_note(self):
-        note_data = {field: entry.get() for field, entry in self.entries.items()}
-        note_data['File'] = self.file_label.cget("text")
-        print("Note added:", note_data)
-        messagebox.showinfo("Success", "Note added successfully!")
-        self.controller.show_frame("MainScreen")
+        # Show confirmation popup
+        confirm = messagebox.askyesno("Confirm", "Are you sure you want to save this note?")
+
+        if confirm:
+            # If the user clicks "Yes", proceed with saving the note
+            note_data = {field: entry.get() for field, entry in self.entries.items()}
+            note_data['File'] = self.file_label.cget("text")
+            print("Note added:", note_data)
+            messagebox.showinfo("Success", "Note added successfully!")
+            self.controller.show_frame("MainScreen")
+        else:
+            # If the user clicks "No", do nothing
+            print("Note saving canceled.")
