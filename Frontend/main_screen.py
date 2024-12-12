@@ -16,6 +16,10 @@ class MainScreen(tk.Frame):
                                     command=lambda: self.controller.show_frame("AddTodoScreen"))
         add_todo_button.pack(side="left", padx=10)
 
+        edit_todo_button = tk.Button(nav_frame, text="Edit a new to-do", font=("Arial", 12), bg="white", fg="#4A90E2",
+                                    command=lambda: self.controller.show_frame("EditTodoScreen"))
+        edit_todo_button.pack(side="left", padx=10)
+
         all_button = tk.Button(nav_frame, text="All", font=("Arial", 12), bg="#4A90E2", fg="white", width=8)
         all_button.pack(side="left", padx=10)
 
