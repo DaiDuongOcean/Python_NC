@@ -4,7 +4,7 @@ from controller import Controller
 def main():
     root = tk.Tk()
     root.title("To-Do List")
-    root.geometry("700x500")
+    root.geometry("750x500")
     root.configure(bg="#4A90E2")
 
     app = Controller(root)  # Pass the root window to the controller
