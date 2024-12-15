@@ -80,7 +80,7 @@ class EditTodoScreen(tk.Frame):
         button_frame.grid(row=len(fields) + 3, column=0, columnspan=2, pady=10)
 
         add_button = tk.Button(button_frame, text="Save", font=("Arial", 12), bg="green", fg="white", width=10,
-                               command=self.edit_note())
+                               command=self.edit_note)
         add_button.pack(side="left", padx=10)
 
         cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10,
