@@ -21,8 +21,8 @@ class EditTodoScreen(tk.Frame):
         add_todo_content.place(relx=0.5, rely=0.5, anchor="center", width=450, height=600)
 
         # Title
-        title_label = tk.Label(add_todo_content, text="Add Note", font=("Arial", 16, "bold"), bg=bg_color, fg="white")
-        title_label.grid(row=0, column=0, columnspan=2, pady=(0, 15))
+        title_label = tk.Label(add_todo_content, text="Edit Note", font=("Arial", 16, "bold"), bg=bg_color, fg="white")
+        title_label.grid(row=0, column=0, columnspan=2, pady=(15, 15))
 
         # Fields
         fields = [
@@ -93,28 +93,47 @@ class EditTodoScreen(tk.Frame):
     def open_time_picker(self, event):
         popup = tk.Toplevel(self)
         popup.title("Select Time")
-        popup.geometry("200x150")
+        popup.geometry("150x150")
         popup.configure(bg="#2F2F2F")
 
+        # Hour label and Spinbox
         tk.Label(popup, text="Hour:", font=("Arial", 10), bg="#2F2F2F", fg="white").grid(row=0, column=0, padx=10,
                                                                                          pady=5)
         hour_var = tk.StringVar(value="00")
-        hour_spinbox = ttk.Spinbox(popup, from_=0, to=23, wrap=True, textvariable=hour_var, font=("Arial", 10), width=5)
+        hour_spinbox = ttk.Spinbox(
+            popup, from_=0, to=23, wrap=True, textvariable=hour_var, font=("Arial", 10), width=5, validate="key"
+        )
         hour_spinbox.grid(row=0, column=1, padx=10, pady=5)
 
+        # Minute label and Spinbox
         tk.Label(popup, text="Minute:", font=("Arial", 10), bg="#2F2F2F", fg="white").grid(row=1, column=0, padx=10,
                                                                                            pady=5)
         minute_var = tk.StringVar(value="00")
-        minute_spinbox = ttk.Spinbox(popup, from_=0, to=59, wrap=True, textvariable=minute_var, font=("Arial", 10),
-                                     width=5)
+        minute_spinbox = ttk.Spinbox(
+            popup, from_=0, to=59, wrap=True, textvariable=minute_var, font=("Arial", 10), width=5, validate="key"
+        )
         minute_spinbox.grid(row=1, column=1, padx=10, pady=5)
 
+        # Function to validate and set time
         def set_time():
-            time_value = f"{hour_var.get()}:{minute_var.get()}"
-            self.entries["Time"].delete(0, tk.END)
-            self.entries["Time"].insert(0, time_value)
-            popup.destroy()
+            try:
+                hour = int(hour_var.get())
+                minute = int(minute_var.get())
 
+                # Ensure hour is within 0-23 and minute is within 0-59
+                if 0 <= hour <= 23 and 0 <= minute <= 59:
+                    time_value = f"{hour:02d}:{minute:02d}"  # Format as HH:MM
+                    self.entries["Time"].delete(0, tk.END)
+                    self.entries["Time"].insert(0, time_value)
+
+                else:
+                    tk.messagebox.showerror("Invalid Time", "Please enter a valid time (HH:MM).")
+
+                popup.destroy()
+            except ValueError:
+                tk.messagebox.showerror("Invalid Input", "Please enter numbers only.")
+
+        # Set button
         set_button = tk.Button(popup, text="Set", font=("Arial", 10), bg="green", fg="white", command=set_time)
         set_button.grid(row=2, column=0, columnspan=2, pady=10)
 
