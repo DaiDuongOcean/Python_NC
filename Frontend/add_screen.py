@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 from PIL import Image, ImageTk
-from Backend.controller.main import load_notes, save_note, delete_note, load_notes
+# from Backend.controller.main import load_notes, save_note, delete_note, load_notes
 
 bg_color = "#4A90E2"
 
