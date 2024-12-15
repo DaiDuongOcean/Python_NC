@@ -29,23 +29,23 @@ class MainScreen(tk.Frame):
         # empty_label_1.grid(row=0, column=1)
 
         # Option Menus (Equal size)
-        status_options = ["Status", "To-do", "Completed"]
+        status_options = ["Uncomplete", "Completed"]
         self.status_var = tk.StringVar(nav_frame)
-        self.status_var.set(status_options[0])
+        self.status_var.set("Status")
         status_menu = tk.OptionMenu(nav_frame, self.status_var, *status_options)
         status_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         status_menu.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
-        task_options = ["All", "Pending", "Completed"]
+        task_options = ["Cate 1", "Cate 2"]
         self.task_var = tk.StringVar(nav_frame)
-        self.task_var.set(task_options[0])
+        self.task_var.set("Category")
         task_menu = tk.OptionMenu(nav_frame, self.task_var, *task_options)
         task_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         task_menu.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
 
-        priority_options = ["Priority", "High", "Medium", "Low"]
+        priority_options = ["High", "Medium", "Low"]
         self.priority_var = tk.StringVar(nav_frame)
-        self.priority_var.set(priority_options[0])
+        self.priority_var.set("Priority")
         priority_menu = tk.OptionMenu(nav_frame, self.priority_var, *priority_options)
         priority_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         priority_menu.grid(row=0, column=4, padx=5, pady=5, sticky="ew")

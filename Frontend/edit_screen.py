@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
+from tkcalendar import DateEntry
 from PIL import Image, ImageTk
-# from Backend.controller.main import load_notes, save_note, delete_note, load_notes
+
 
 bg_color = "#4A90E2"
 
@@ -13,12 +14,12 @@ class EditTodoScreen(tk.Frame):
         self.pack(fill="both", expand=True)
 
         # Add note form container
-        add_todo_content = tk.Frame(self, bg=bg_color,  padx=20, pady=20)
-        add_todo_content.place(relx=0.5, rely=0.5, anchor="center", width=400, height=600)
+        add_todo_content = tk.Frame(self, bg=bg_color, padx=20, pady=20)
+        add_todo_content.place(relx=0.5, rely=0.5, anchor="center", width=450, height=600)
 
         # Title
-        title_label = tk.Label(add_todo_content, text="Edit note", font=("Arial", 16, "bold"), bg=bg_color, fg="white")
-        title_label.pack(pady=(0, 15))
+        title_label = tk.Label(add_todo_content, text="Add Note", font=("Arial", 16, "bold"), bg=bg_color, fg="white")
+        title_label.grid(row=0, column=0, columnspan=2, pady=(0, 15))
 
         # Fields
         fields = [
@@ -31,33 +32,44 @@ class EditTodoScreen(tk.Frame):
         ]
 
         self.entries = {}
-        for field, options in fields:
-            frame = tk.Frame(add_todo_content, bg=bg_color)
-            frame.pack(fill="x", pady=5)
-
-            label = tk.Label(frame, text=field, font=("Arial", 10), bg=bg_color, fg="white")
-            label.pack(side="left", padx=(0, 10))
+        for i, (field, options) in enumerate(fields):
+            label = tk.Label(add_todo_content, text=field, font=("Arial", 10), bg=bg_color, fg="white")
+            label.grid(row=i + 1, column=0, sticky="w", padx=10, pady=5)
 
             if options is None:
-                # Text Entry
-                entry = tk.Entry(frame, font=("Arial", 10), bg="#1E1E1E", fg="white", insertbackground="white")
-                entry.pack(side="left", fill="x", expand=True)
+                if field == "Date":
+                    # Date Picker
+                    entry = DateEntry(add_todo_content, font=("Arial", 10), background="darkblue", foreground="white",
+                                      borderwidth=2)
+                elif field == "Time":
+                    # Time Picker
+                    entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
+                                     insertbackground="black")
+                    entry.bind("<Button-1>", self.open_time_picker)
+                else:
+                    # Text Entry
+                    entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
+                                     insertbackground="black")
+                entry.grid(row=i + 1, column=1, sticky="ew", padx=10, pady=5)
                 self.entries[field] = entry
             else:
                 # Dropdown (Combobox)
-                combo = ttk.Combobox(frame, values=options, state="readonly", font=("Arial", 10))
-                combo.pack(side="left", fill="x", expand=True)
+                combo = ttk.Combobox(add_todo_content, values=options, state="readonly", font=("Arial", 10))
+                combo.grid(row=i + 1, column=1, sticky="ew", padx=10, pady=5)
                 self.entries[field] = combo
 
+        add_todo_content.columnconfigure(1, weight=1)
+
         # File Chooser
-        file_frame = tk.Frame(add_todo_content, bg=bg_color)
-        file_frame.pack(fill="x", pady=(10, 15))
+        file_label = tk.Label(add_todo_content, text="Attachment", font=("Arial", 10), bg=bg_color, fg="white")
+        file_label.grid(row=len(fields) + 1, column=0, sticky="w", padx=10, pady=5)
 
-        file_button = tk.Button(file_frame, text="Choose File", bg="#4A90E2", fg="white", font=("Arial", 10), command=self.choose_file)
-        file_button.pack(side="left", padx=(0, 10))
+        file_button = tk.Button(add_todo_content, text="Choose File", bg="#4A90E2", fg="white", font=("Arial", 10),
+                                command=self.choose_file)
+        file_button.grid(row=len(fields) + 1, column=1, sticky="w", padx=10, pady=5)
 
-        self.file_label = tk.Label(file_frame, text="No file chosen", font=("Arial", 10), bg=bg_color, fg="white")
-        self.file_label.pack(side="left", fill="x", expand=True)
+        self.file_label = tk.Label(add_todo_content, text="No file chosen", font=("Arial", 10), bg=bg_color, fg="white")
+        self.file_label.grid(row=len(fields) + 2, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
         # Image Preview
         self.image_preview = tk.Label(self, bg=bg_color)
@@ -65,13 +77,43 @@ class EditTodoScreen(tk.Frame):
 
         # Buttons
         button_frame = tk.Frame(add_todo_content, bg=bg_color)
-        button_frame.pack(pady=10)
+        button_frame.grid(row=len(fields) + 3, column=0, columnspan=2, pady=10)
 
-        edit_button = tk.Button(button_frame, text="Save", font=("Arial", 12), bg="green", fg="white", width=10, command=self.edit_note)
-        edit_button.pack(side="left", padx=10)
+        add_button = tk.Button(button_frame, text="Save", font=("Arial", 12), bg="green", fg="white", width=10,
+                               command=self.edit_note())
+        add_button.pack(side="left", padx=10)
 
-        cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10, command=lambda: self.controller.show_frame("MainScreen"))
+        cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10,
+                                  command=lambda: self.controller.show_frame("MainScreen"))
         cancel_button.pack(side="left", padx=10)
+
+    def open_time_picker(self, event):
+        popup = tk.Toplevel(self)
+        popup.title("Select Time")
+        popup.geometry("200x150")
+        popup.configure(bg="#2F2F2F")
+
+        tk.Label(popup, text="Hour:", font=("Arial", 10), bg="#2F2F2F", fg="white").grid(row=0, column=0, padx=10,
+                                                                                         pady=5)
+        hour_var = tk.StringVar(value="00")
+        hour_spinbox = ttk.Spinbox(popup, from_=0, to=23, wrap=True, textvariable=hour_var, font=("Arial", 10), width=5)
+        hour_spinbox.grid(row=0, column=1, padx=10, pady=5)
+
+        tk.Label(popup, text="Minute:", font=("Arial", 10), bg="#2F2F2F", fg="white").grid(row=1, column=0, padx=10,
+                                                                                           pady=5)
+        minute_var = tk.StringVar(value="00")
+        minute_spinbox = ttk.Spinbox(popup, from_=0, to=59, wrap=True, textvariable=minute_var, font=("Arial", 10),
+                                     width=5)
+        minute_spinbox.grid(row=1, column=1, padx=10, pady=5)
+
+        def set_time():
+            time_value = f"{hour_var.get()}:{minute_var.get()}"
+            self.entries["Time"].delete(0, tk.END)
+            self.entries["Time"].insert(0, time_value)
+            popup.destroy()
+
+        set_button = tk.Button(popup, text="Set", font=("Arial", 10), bg="green", fg="white", command=set_time)
+        set_button.grid(row=2, column=0, columnspan=2, pady=10)
 
     def choose_file(self):
         filename = filedialog.askopenfilename(filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.gif")])
