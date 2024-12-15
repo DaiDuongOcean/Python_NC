@@ -16,6 +16,9 @@ class Controller:
         # Show the main screen by default
         self.show_frame("MainScreen")
 
+        self.frames["AddTodoScreen"].set_up()
+        self.frames["EditTodoScreen"].set_up()
+
     def show_frame(self, frame_name):
         """Switch to the specified frame."""
         show_frame = self.frames[frame_name]

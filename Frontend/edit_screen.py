@@ -13,6 +13,9 @@ class EditTodoScreen(tk.Frame):
         self.configure(bg="#2F2F2F")
         self.pack(fill="both", expand=True)
 
+
+
+    def set_up(self):
         # Add note form container
         add_todo_content = tk.Frame(self, bg=bg_color, padx=20, pady=20)
         add_todo_content.place(relx=0.5, rely=0.5, anchor="center", width=450, height=600)

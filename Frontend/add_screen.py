@@ -12,6 +12,9 @@ class AddTodoScreen(tk.Frame):
         self.configure(bg="#2F2F2F")
         self.pack(fill="both", expand=True)
 
+
+
+    def set_up(self):
         # Add note form container
         add_todo_content = tk.Frame(self, bg=bg_color, padx=20, pady=20)
         add_todo_content.place(relx=0.5, rely=0.5, anchor="center", width=450, height=600)
@@ -38,14 +41,17 @@ class AddTodoScreen(tk.Frame):
             if options is None:
                 if field == "Date":
                     # Date Picker
-                    entry = DateEntry(add_todo_content, font=("Arial", 10), background="darkblue", foreground="white", borderwidth=2)
+                    entry = DateEntry(add_todo_content, font=("Arial", 10), background="darkblue", foreground="white",
+                                      borderwidth=2)
                 elif field == "Time":
                     # Time Picker
-                    entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black", insertbackground="black")
+                    entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
+                                     insertbackground="black")
                     entry.bind("<Button-1>", self.open_time_picker)
                 else:
                     # Text Entry
-                    entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black", insertbackground="black")
+                    entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
+                                     insertbackground="black")
                 entry.grid(row=i + 1, column=1, sticky="ew", padx=10, pady=5)
                 self.entries[field] = entry
             else:
@@ -60,7 +66,8 @@ class AddTodoScreen(tk.Frame):
         file_label = tk.Label(add_todo_content, text="Attachment", font=("Arial", 10), bg=bg_color, fg="white")
         file_label.grid(row=len(fields) + 1, column=0, sticky="w", padx=10, pady=5)
 
-        file_button = tk.Button(add_todo_content, text="Choose File", bg="#4A90E2", fg="white", font=("Arial", 10), command=self.choose_file)
+        file_button = tk.Button(add_todo_content, text="Choose File", bg="#4A90E2", fg="white", font=("Arial", 10),
+                                command=self.choose_file)
         file_button.grid(row=len(fields) + 1, column=1, sticky="w", padx=10, pady=5)
 
         self.file_label = tk.Label(add_todo_content, text="No file chosen", font=("Arial", 10), bg=bg_color, fg="white")
@@ -74,10 +81,12 @@ class AddTodoScreen(tk.Frame):
         button_frame = tk.Frame(add_todo_content, bg=bg_color)
         button_frame.grid(row=len(fields) + 3, column=0, columnspan=2, pady=10)
 
-        add_button = tk.Button(button_frame, text="Add", font=("Arial", 12), bg="green", fg="white", width=10, command=self.add_note)
+        add_button = tk.Button(button_frame, text="Add", font=("Arial", 12), bg="green", fg="white", width=10,
+                               command=self.add_note)
         add_button.pack(side="left", padx=10)
 
-        cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10, command=lambda: self.controller.show_frame("MainScreen"))
+        cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10,
+                                  command=lambda: self.controller.show_frame("MainScreen"))
         cancel_button.pack(side="left", padx=10)
 
     def open_time_picker(self, event):
