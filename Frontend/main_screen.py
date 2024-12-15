@@ -69,32 +69,34 @@ class MainScreen(tk.Frame):
         table_frame = tk.Frame(self, bg="white", padx=10, pady=10)
         table_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        self.tree = ttk.Treeview(table_frame, columns=("Task", "Description", "Category", "When", "Priority", "Fulfillment", "Actions"), show="headings")
-        self.tree.heading("Task", text="Task")
+        self.tree = ttk.Treeview(table_frame, columns=("Task", "Description", "Category", "When","Time" , "Priority"), show="headings")
+        self.tree.heading("Task", text="Name")
         self.tree.heading("Description", text="Description")
         self.tree.heading("Category", text="Category")
-        self.tree.heading("When", text="When")
+        self.tree.heading("When", text="Date")
+        self.tree.heading("Time", text="Time")
         self.tree.heading("Priority", text="Priority")
-        self.tree.heading("Fulfillment", text="Fulfillment")
-        self.tree.heading("Actions", text="Actions")
+        # self.tree.heading("Fulfillment", text="Fulfillment")
+        # self.tree.heading("Actions", text="Actions")
 
         # Column Widths
         self.tree.column("Task", width=120, anchor="w")
         self.tree.column("Description", width=200, anchor="w")
         self.tree.column("Category", width=100, anchor="w")
         self.tree.column("When", width=100, anchor="w")
+        self.tree.column("Time", width=100, anchor="w")
         self.tree.column("Priority", width=100, anchor="w")
-        self.tree.column("Fulfillment", width=100, anchor="w")
-        self.tree.column("Actions", width=150, anchor="center")
+        # self.tree.column("Fulfillment", width=100, anchor="w")
+        # self.tree.column("Actions", width=150, anchor="center")
 
         tasks = [
-            ["Learn React", "Managing State, Effects", "Programming", "-", "High", "30%", ""],
-            ["Shopping", "Potatoes, Onions, Eggs", "Household", "26.02.2023", "High", "0%", ""],
-            ["Buy Tickets", "cheapflights.com/shanghai", "Travel", "12.01.2023 12:00", "Medium", "100%", ""],
+            ["Learn React", "Managing State, Effects", "Programming", "26.03.2023", "12:03","High"],
+            ["Shopping", "Potatoes, Onions, Eggs", "Household", "26.02.2023", "12:03", "High"],
+            ["Buy Tickets", "cheapflights.com/shanghai", "Travel", "12.01.2023 12:00", "12:03", "Medium"],
         ]
 
         for task in tasks:
-            self.tree.insert("", "end", values=task[:-1])
+            self.tree.insert("", "end", values=task)
 
         self.tree.pack(fill="both", expand=True)
 
