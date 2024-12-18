@@ -204,12 +204,52 @@ class EditTodoScreen(tk.Frame):
         confirm = messagebox.askyesno("Confirm", "Are you sure you want to save this note?")
 
         if confirm:
-            # If the user clicks "Yes", proceed with saving the note
-            note_data = {field: entry.get() for field, entry in self.entries.items()}
-            note_data['File'] = self.file_label.cget("text")
-            print("Note edited:", note_data)
-            messagebox.showinfo("Success", "Note updated successfully!")
-            self.controller.show_frame("MainScreen")
+            name = self.entries["Name"].get()
+            description = self.entries["Description"].get()
+            category = self.entries["Category"].get()
+            date = self.entries["Date"].get()
+            time = self.entries["Time"].get()
+            priority = self.entries["Priority"].get()
+            image = self.file_label.cget("text") if self.file_label.cget("text") != "No file chosen" else None
+            status = "Pending"
+            print(name, description, category, date, time, priority, image, status)
+
+            if not name or not description or not category or not date or not time or not priority:
+                messagebox.showerror("Error", "All fields except attachment are required.")
+                return
+
+            # Kết nối cơ sở dữ liệu
+            try:
+                mydb = mysql.connector.connect(
+                    host="127.0.0.1",
+                    username="admin",
+                    password="Ocean123"
+                )
+                cursor = mydb.cursor()
+                cursor.execute("use BTL_PythonNC")
+
+                # Thực hiện câu lệnh SQL chèn dữ liệu
+                print(name)
+                query = """
+                    update note set description = %s, category = %s, date = %s, time = %s, priority = %s, image = %s, status = %s
+                    where name = %s
+                """
+                cursor.execute(query, (description, category, date, time, priority, image, status, name,))
+
+                # Lưu thay đổi
+                mydb.commit()
+
+                # Thông báo thành công
+                messagebox.showinfo("Success", "Note edited successfully!")
+
+                # Chuyển về màn hình chính
+                self.controller.show_frame("MainScreen")
+            except Exception as e:
+                messagebox.showerror("Database Error", f"An error occurred: {e}")
+            finally:
+                # Đóng kết nối cơ sở dữ liệu
+                mydb.close()
         else:
             # If the user cancels, do nothing
             return
+
