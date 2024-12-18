@@ -1,11 +1,42 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import  messagebox
 import mysql.connector
 
-from Backend.controller.main import load_notes
+from Backend.controller.main import load_notes, update_note
+from Frontend.util import CATEGORIES, PRIORITY, STATUS, get_cols, get_col_index_by_name, convert_from_list_to_dict
 
+
+def toggle_checkbox(item_id, tree):
+    tree.selection_set(item_id)
+    selected_item = tree.selection()
+    if selected_item:
+        row_values = list(tree.item(selected_item, "values"))
+        col_index = get_col_index_by_name("Status")
+        current_value = tree.item(item_id, "values")[col_index]
+        if current_value == STATUS["Uncomplete"]:
+            new_value = STATUS["Completed"]
+        else:
+            new_value = STATUS["Uncomplete"]
+        row_values[col_index] = new_value
+        tree.item(item_id, values=row_values)
+        note_info = convert_from_list_to_dict(row_values)
+        update_note(note_info)
+        messagebox.showinfo(title="Success", message="Update status successfully")
+
+def on_click(event, tree):
+    """Handle clicks on the Treeview to toggle checkboxes."""
+    region = tree.identify("region", event.x, event.y)
+    if region == "cell":  # Check if the click is inside a cell
+        column = tree.identify_column(event.x)
+        col_index = get_col_index_by_name("Status")
+        if column == f"#{col_index + 1}":  # If the click is in the 'Checkbox' column
+            row_id = tree.identify_row(event.y)
+            if row_id:  # Ensure a valid row is clicked
+                toggle_checkbox(row_id, tree)
 
 class MainScreen(tk.Frame):
+
     def __init__(self, controller):
         super().__init__(controller.root)
         self.controller = controller
@@ -29,21 +60,21 @@ class MainScreen(tk.Frame):
         add_todo_button.grid(row=0, column=0, padx=(20, 40), pady=5, sticky="ew")
 
         # Option Menus (Equal size)
-        status_options = ["Uncomplete", "Completed"]
+        status_options = ["All", *STATUS]
         self.status_var = tk.StringVar(nav_frame)
         self.status_var.set("Status")
         status_menu = tk.OptionMenu(nav_frame, self.status_var, *status_options)
         status_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         status_menu.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
-        task_options = ["Cate 1", "Cate 2"]
+        task_options = ["All", *CATEGORIES]
         self.task_var = tk.StringVar(nav_frame)
         self.task_var.set("Category")
         task_menu = tk.OptionMenu(nav_frame, self.task_var, *task_options)
         task_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         task_menu.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
 
-        priority_options = ["High", "Medium", "Low"]
+        priority_options = ["All", *PRIORITY]
         self.priority_var = tk.StringVar(nav_frame)
         self.priority_var.set("Priority")
         priority_menu = tk.OptionMenu(nav_frame, self.priority_var, *priority_options)
@@ -69,22 +100,14 @@ class MainScreen(tk.Frame):
         table_frame = tk.Frame(self, bg="white", padx=10, pady=10)
         table_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        self.tree = ttk.Treeview(table_frame, columns=("Task", "Description", "Category", "When","Time" , "Priority", "Status"), show="headings")
-        self.tree.heading("Task", text="Name")
-        self.tree.heading("Description", text="Description")
-        self.tree.heading("Category", text="Category")
-        self.tree.heading("When", text="Date")
-        self.tree.heading("Time", text="Time")
-        self.tree.heading("Priority", text="Priority")
-        self.tree.heading("Status", text="Status")
-
+        cols = get_cols()
+        cols_name = [col['name'] for col in cols]
+        self.tree = ttk.Treeview(table_frame, columns=cols_name, show="headings")
+        for col in cols_name:
+            self.tree.heading(col, text=col)
         # Column Widths
-        self.tree.column("Task", width=120, anchor="w")
-        self.tree.column("Description", width=200, anchor="w")
-        self.tree.column("Category", width=100, anchor="w")
-        self.tree.column("When", width=100, anchor="w")
-        self.tree.column("Time", width=100, anchor="w")
-        self.tree.column("Priority", width=100, anchor="w")
+        for col in cols:
+            self.tree.column(col['name'], width=col['width'], anchor="w")
 
         # for task in tasks:
         #     self.tree.insert("", "end", values=task)
@@ -100,7 +123,7 @@ class MainScreen(tk.Frame):
 
         edit_button.pack(side="left", padx=10)
         delete_button.pack(side="left", padx=10)
-
+        self.tree.bind("<Button-1>", lambda event: on_click(event, self.tree))
     def update_screen(self, target_screen=None):
         """Cập nhật dữ liệu khi màn hình được hiển thị."""
         # Chỉ reset dữ liệu khi chuyển sang AddTodoScreen
@@ -144,3 +167,4 @@ class MainScreen(tk.Frame):
 
     def search_action(self):
         print("Search action executed")
+

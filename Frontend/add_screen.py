@@ -4,6 +4,9 @@ from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 import mysql.connector
 
+from Backend.controller.main import add_note
+from Frontend.util import CATEGORIES, PRIORITY
+
 bg_color = "#4A90E2"
 
 class AddTodoScreen(tk.Frame):
@@ -26,10 +29,10 @@ class AddTodoScreen(tk.Frame):
         fields = [
             ("Name", None),
             ("Description", None),
-            ("Category", ["Cate 1", "Cate 2", "Cate 3"]),
+            ("Category", [*CATEGORIES]),
             ("Date", None),
             ("Time", None),
-            ("Priority", ["Low", "Medium", "High"]),
+            ("Priority", [*PRIORITY]),
         ]
 
         self.entries = {}
@@ -156,32 +159,25 @@ class AddTodoScreen(tk.Frame):
         time = self.entries["Time"].get()
         priority = self.entries["Priority"].get()
         image = self.file_label.cget("text") if self.file_label.cget("text") != "No file chosen" else None
-        status = "Pending"
+        status = "Uncomplete"
 
         if not name or not description or not category or not date or not time or not priority:
             messagebox.showerror("Error", "All fields except attachment are required.")
             return
 
-        # Kết nối cơ sở dữ liệu
         try:
-            mydb = mysql.connector.connect(
-                host="127.0.0.1",
-                username="admin",
-                password="Ocean123"
-            )
-            cursor = mydb.cursor()
-            cursor.execute("use BTL_PythonNC")
-
-            # Thực hiện câu lệnh SQL chèn dữ liệu
-            query = """
-                    INSERT INTO NOTE (name, description, category, date, time, priority, image, status) 
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """
-            cursor.execute(query, (name, description, category, date, time, priority, image, status))
-
-            # Lưu thay đổi
-            mydb.commit()
-
+            note_info = {
+                'name': name,
+                'description': description,
+                'category': category,
+                'date': date,
+                'time': time,
+                'priority': priority,
+                'image': image,
+                'status': status
+            }
+            print(note_info)
+            add_note(note_info)
             # Thông báo thành công
             messagebox.showinfo("Success", "Note added successfully!")
 
@@ -189,9 +185,6 @@ class AddTodoScreen(tk.Frame):
             self.controller.show_frame("MainScreen")
         except Exception as e:
             messagebox.showerror("Database Error", f"An error occurred: {e}")
-        finally:
-            # Đóng kết nối cơ sở dữ liệu
-            mydb.close()
 
     def reset_fields(self):
         """Reset all input fields to their default state."""
