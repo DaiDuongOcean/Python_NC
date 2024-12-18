@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import mysql.connector
 
 class MainScreen(tk.Frame):
     def __init__(self, controller):
@@ -23,10 +24,6 @@ class MainScreen(tk.Frame):
         add_todo_button = tk.Button(nav_frame, text="Add", font=("sans 12 bold"), bg="white", fg="#4A90E2", bd=5,
                                     command=lambda: self.controller.show_frame("AddTodoScreen"))
         add_todo_button.grid(row=0, column=0, padx=(20, 40), pady=5, sticky="ew")
-
-        # Empty columns for spacing
-        # empty_label_1 = tk.Label(nav_frame, bg="#4A90E2")
-        # empty_label_1.grid(row=0, column=1)
 
         # Option Menus (Equal size)
         status_options = ["Uncomplete", "Completed"]
@@ -69,15 +66,14 @@ class MainScreen(tk.Frame):
         table_frame = tk.Frame(self, bg="white", padx=10, pady=10)
         table_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        self.tree = ttk.Treeview(table_frame, columns=("Task", "Description", "Category", "When","Time" , "Priority"), show="headings")
+        self.tree = ttk.Treeview(table_frame, columns=("Task", "Description", "Category", "When","Time" , "Priority", "Status"), show="headings")
         self.tree.heading("Task", text="Name")
         self.tree.heading("Description", text="Description")
         self.tree.heading("Category", text="Category")
         self.tree.heading("When", text="Date")
         self.tree.heading("Time", text="Time")
         self.tree.heading("Priority", text="Priority")
-        # self.tree.heading("Fulfillment", text="Fulfillment")
-        # self.tree.heading("Actions", text="Actions")
+        self.tree.heading("Status", text="Status")
 
         # Column Widths
         self.tree.column("Task", width=120, anchor="w")
@@ -86,17 +82,9 @@ class MainScreen(tk.Frame):
         self.tree.column("When", width=100, anchor="w")
         self.tree.column("Time", width=100, anchor="w")
         self.tree.column("Priority", width=100, anchor="w")
-        # self.tree.column("Fulfillment", width=100, anchor="w")
-        # self.tree.column("Actions", width=150, anchor="center")
 
-        tasks = [
-            ["Learn React", "Managing State, Effects", "Programming", "26.03.2023", "12:03","High"],
-            ["Shopping", "Potatoes, Onions, Eggs", "Household", "26.02.2023", "12:03", "High"],
-            ["Buy Tickets", "cheapflights.com/shanghai", "Travel", "12.01.2023 12:00", "12:03", "Medium"],
-        ]
-
-        for task in tasks:
-            self.tree.insert("", "end", values=task)
+        # for task in tasks:
+        #     self.tree.insert("", "end", values=task)
 
         self.tree.pack(fill="both", expand=True)
 
@@ -110,8 +98,53 @@ class MainScreen(tk.Frame):
         edit_button.pack(side="left", padx=10)
         delete_button.pack(side="left", padx=10)
 
+    def update_screen(self, target_screen=None):
+        """Cập nhật dữ liệu khi màn hình được hiển thị."""
+        # Chỉ reset dữ liệu khi chuyển sang AddTodoScreen
+        #if target_screen == "AddTodoScreen":
+        self.load_data()
+
+    def load_data(self):
+        # Kết nối cơ sở dữ liệu và lấy dữ liệu
+        db = mysql.connector.connect(
+            host="127.0.0.1",
+            username="admin",
+            password="Ocean123"
+        )
+        cursor = db.cursor()
+        cursor.execute("use BTL_PythonNC")
+        cursor.execute("SELECT name, description, category, date, time, priority, status FROM NOTE")  # Câu SQL
+        rows = cursor.fetchall()
+        db.close()
+
+        # Xóa dữ liệu cũ trong Treeview
+        for row in self.tree.get_children():
+            self.tree.delete(row)
+
+        # Thêm dữ liệu mới vào Treeview
+        for row in rows:
+            self.tree.insert("", "end", values=row)
+
     def edit_task(self):
-        print("Edit Task")
+        selected_item = self.tree.selection()  # Lấy phần tử được chọn
+        if not selected_item:
+            print("No item selected!")
+            return
+
+        # Lấy giá trị từ phần tử được chọn
+        selected_values = self.tree.item(selected_item, "values")
+        task_data = {
+            "name": selected_values[0],
+            "description": selected_values[1],
+            "category": selected_values[2],
+            "date": selected_values[3],
+            "time": selected_values[4],
+            "priority": selected_values[5],
+            "status": selected_values[6],
+        }
+
+        # Gửi dữ liệu tới EditScreen
+        self.controller.show_frame("EditTodoScreen", data=task_data)
 
     def delete_task(self):
         print("Delete Task")

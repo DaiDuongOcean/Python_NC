@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
+import mysql.connector
 
 bg_color = "#4A90E2"
 
@@ -11,8 +12,6 @@ class AddTodoScreen(tk.Frame):
         self.controller = controller
         self.configure(bg="#2F2F2F")
         self.pack(fill="both", expand=True)
-
-
 
     def set_up(self):
         # Add note form container
@@ -92,7 +91,7 @@ class AddTodoScreen(tk.Frame):
     def open_time_picker(self, event):
         popup = tk.Toplevel(self)
         popup.title("Select Time")
-        popup.geometry("150x150")
+        popup.geometry("150x110")
         popup.configure(bg="#2F2F2F")
 
         # Hour label and Spinbox
@@ -150,10 +149,62 @@ class AddTodoScreen(tk.Frame):
                 messagebox.showerror("Error", f"Cannot load image: {e}")
 
     def add_note(self):
-        note_data = {field: entry.get() for field, entry in self.entries.items()}
-        note_data['File'] = self.file_label.cget("text")
-        print("Note added:", note_data)
-        messagebox.showinfo("Success", "Note added successfully!")
-        self.controller.show_frame("MainScreen")
+        name = self.entries["Name"].get()
+        description = self.entries["Description"].get()
+        category = self.entries["Category"].get()
+        date = self.entries["Date"].get()
+        time = self.entries["Time"].get()
+        priority = self.entries["Priority"].get()
+        image = self.file_label.cget("text") if self.file_label.cget("text") != "No file chosen" else None
+        status = "Pending"
+
+        if not name or not description or not category or not date or not time or not priority:
+            messagebox.showerror("Error", "All fields except attachment are required.")
+            return
+
+        # Kết nối cơ sở dữ liệu
+        try:
+            mydb = mysql.connector.connect(
+                host="127.0.0.1",
+                username="admin",
+                password="Ocean123"
+            )
+            cursor = mydb.cursor()
+            cursor.execute("use BTL_PythonNC")
+
+            # Thực hiện câu lệnh SQL chèn dữ liệu
+            query = """
+                    INSERT INTO NOTE (name, description, category, date, time, priority, image, status) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """
+            cursor.execute(query, (name, description, category, date, time, priority, image, status))
+
+            # Lưu thay đổi
+            mydb.commit()
+
+            # Thông báo thành công
+            messagebox.showinfo("Success", "Note added successfully!")
+
+            # Chuyển về màn hình chính
+            self.controller.show_frame("MainScreen")
+        except Exception as e:
+            messagebox.showerror("Database Error", f"An error occurred: {e}")
+        finally:
+            # Đóng kết nối cơ sở dữ liệu
+            mydb.close()
+
+    def reset_fields(self):
+        """Reset all input fields to their default state."""
+        for field, entry in self.entries.items():
+            if isinstance(entry, ttk.Combobox):
+                entry.set("")  # Clear Combobox
+            elif isinstance(entry, DateEntry):
+                entry.set_date(None)  # Clear DateEntry
+            else:
+                entry.delete(0, tk.END)  # Clear Entry
+
+        self.file_label.config(text="No file chosen")  # Reset file label
+        self.image_preview.config(image="")  # Clear image preview
+        self.image_preview.image = None  # Remove reference to the image
 
 

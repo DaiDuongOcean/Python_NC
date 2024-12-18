@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
-
-
 bg_color = "#4A90E2"
 
 class EditTodoScreen(tk.Frame):
@@ -12,8 +10,6 @@ class EditTodoScreen(tk.Frame):
         self.controller = controller
         self.configure(bg="#2F2F2F")
         self.pack(fill="both", expand=True)
-
-
 
     def set_up(self):
         # Add note form container

@@ -6,7 +6,6 @@ def main():
     root.title("To-Do List")
     root.geometry("900x550")
     root.configure(bg="#4A90E2")
-
     app = Controller(root)  # Pass the root window to the controller
     root.mainloop()
 
