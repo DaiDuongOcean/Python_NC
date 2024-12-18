@@ -1,6 +1,13 @@
 from tkinter import messagebox
 import mysql.connector
 
+cloud_db_config = {
+    'host': "sql12.freesqldatabase.com",
+    'user': "sql12752868",
+    'password': "xd9WGbmFRg",
+    'database': "sql12752868",
+    'port': 3306
+}
 # Database configuration
 db_config = {
     'host': 'localhost',
@@ -13,6 +20,7 @@ def connect_db():
     try:
         mydb = mysql.connector.connect(**db_config)
         create_database(mydb)
+        print("Connected to database")
         return mydb
     except mysql.connector.Error as err:
         return None
