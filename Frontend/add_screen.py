@@ -176,7 +176,6 @@ class AddTodoScreen(tk.Frame):
                 'image': image,
                 'status': status
             }
-            print(note_info)
             add_note(note_info)
             # Thông báo thành công
             messagebox.showinfo("Success", "Note added successfully!")

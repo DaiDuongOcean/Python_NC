@@ -36,7 +36,6 @@ def on_click(event, tree):
                 toggle_checkbox(row_id, tree)
 
 class MainScreen(tk.Frame):
-
     def __init__(self, controller):
         super().__init__(controller.root)
         self.controller = controller
@@ -149,15 +148,7 @@ class MainScreen(tk.Frame):
 
         # Lấy giá trị từ phần tử được chọn
         selected_values = self.tree.item(selected_item, "values")
-        task_data = {
-            "name": selected_values[0],
-            "description": selected_values[1],
-            "category": selected_values[2],
-            "date": selected_values[3],
-            "time": selected_values[4],
-            "priority": selected_values[5],
-            "status": selected_values[6],
-        }
+        task_data = convert_from_list_to_dict(selected_values)
 
         # Gửi dữ liệu tới EditScreen
         self.controller.show_frame("EditTodoScreen", data=task_data)

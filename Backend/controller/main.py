@@ -4,7 +4,6 @@ from tkinter import messagebox
 def save_note(title, content):
     if not title or not content:
         return
-
     mydb = connect_db()
     if mydb:
         cursor = mydb.cursor()
@@ -68,7 +67,6 @@ def update_note(note):
 def delete_note(note_id):
     if not note_id:
         return
-
     mydb = connect_db()
     if mydb:
         cursor = mydb.cursor()
@@ -84,4 +82,14 @@ def search_note(name):
         cursor = mydb.cursor()
         cursor.execute(f"SELECT * FROM notes WHERE name LIKE \'%{name}%\'")
         note = cursor.fetchall()
+        return note
+
+def get_note(id):
+    if not id:
+        return
+    mydb = connect_db()
+    if mydb:
+        cursor = mydb.cursor()
+        cursor.execute(f"SELECT * FROM notes WHERE id = {id}")
+        note = cursor.fetchone()
         return note
