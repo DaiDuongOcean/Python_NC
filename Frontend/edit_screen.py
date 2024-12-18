@@ -2,14 +2,9 @@ import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
-import mysql.connector
-
-from Backend.controller.main import add_note
-from Frontend.util import CATEGORIES, PRIORITY
-
 bg_color = "#4A90E2"
 
-class AddTodoScreen(tk.Frame):
+class EditTodoScreen(tk.Frame):
     def __init__(self, controller):
         super().__init__(controller.root)
         self.controller = controller
@@ -22,17 +17,17 @@ class AddTodoScreen(tk.Frame):
         add_todo_content.place(relx=0.5, rely=0.5, anchor="center", width=450, height=600)
 
         # Title
-        title_label = tk.Label(add_todo_content, text="Add Note", font=("Arial", 16, "bold"), bg=bg_color, fg="white")
+        title_label = tk.Label(add_todo_content, text="Edit Note", font=("Arial", 16, "bold"), bg=bg_color, fg="white")
         title_label.grid(row=0, column=0, columnspan=2, pady=(15, 15))
 
         # Fields
         fields = [
             ("Name", None),
             ("Description", None),
-            ("Category", [*CATEGORIES]),
+            ("Category", ["Cate 1", "Cate 2", "Cate 3"]),
             ("Date", None),
             ("Time", None),
-            ("Priority", [*PRIORITY]),
+            ("Priority", ["Low", "Medium", "High"]),
         ]
 
         self.entries = {}
@@ -83,8 +78,8 @@ class AddTodoScreen(tk.Frame):
         button_frame = tk.Frame(add_todo_content, bg=bg_color)
         button_frame.grid(row=len(fields) + 3, column=0, columnspan=2, pady=10)
 
-        add_button = tk.Button(button_frame, text="Add", font=("Arial", 12), bg="green", fg="white", width=10,
-                               command=self.add_note)
+        add_button = tk.Button(button_frame, text="Save", font=("Arial", 12), bg="green", fg="white", width=10,
+                               command=self.edit_note)
         add_button.pack(side="left", padx=10)
 
         cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10,
@@ -94,7 +89,7 @@ class AddTodoScreen(tk.Frame):
     def open_time_picker(self, event):
         popup = tk.Toplevel(self)
         popup.title("Select Time")
-        popup.geometry("150x110")
+        popup.geometry("150x150")
         popup.configure(bg="#2F2F2F")
 
         # Hour label and Spinbox
@@ -151,53 +146,17 @@ class AddTodoScreen(tk.Frame):
             except Exception as e:
                 messagebox.showerror("Error", f"Cannot load image: {e}")
 
-    def add_note(self):
-        name = self.entries["Name"].get()
-        description = self.entries["Description"].get()
-        category = self.entries["Category"].get()
-        date = self.entries["Date"].get()
-        time = self.entries["Time"].get()
-        priority = self.entries["Priority"].get()
-        image = self.file_label.cget("text") if self.file_label.cget("text") != "No file chosen" else None
-        status = "Uncomplete"
+    def edit_note(self):
+        # Show confirmation popup
+        confirm = messagebox.askyesno("Confirm", "Are you sure you want to save this note?")
 
-        if not name or not description or not category or not date or not time or not priority:
-            messagebox.showerror("Error", "All fields except attachment are required.")
-            return
-
-        try:
-            note_info = {
-                'name': name,
-                'description': description,
-                'category': category,
-                'date': date,
-                'time': time,
-                'priority': priority,
-                'image': image,
-                'status': status
-            }
-            print(note_info)
-            add_note(note_info)
-            # Thông báo thành công
+        if confirm:
+            # If the user clicks "Yes", proceed with saving the note
+            note_data = {field: entry.get() for field, entry in self.entries.items()}
+            note_data['File'] = self.file_label.cget("text")
+            print("Note added:", note_data)
             messagebox.showinfo("Success", "Note added successfully!")
-
-            # Chuyển về màn hình chính
             self.controller.show_frame("MainScreen")
-        except Exception as e:
-            messagebox.showerror("Database Error", f"An error occurred: {e}")
-
-    def reset_fields(self):
-        """Reset all input fields to their default state."""
-        for field, entry in self.entries.items():
-            if isinstance(entry, ttk.Combobox):
-                entry.set("")  # Clear Combobox
-            elif isinstance(entry, DateEntry):
-                entry.set_date(None)  # Clear DateEntry
-            else:
-                entry.delete(0, tk.END)  # Clear Entry
-
-        self.file_label.config(text="No file chosen")  # Reset file label
-        self.image_preview.config(image="")  # Clear image preview
-        self.image_preview.image = None  # Remove reference to the image
-
-
+        else:
+            # If the user clicks "No", do nothing
+            print("Note saving canceled.")

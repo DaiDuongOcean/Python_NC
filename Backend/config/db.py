@@ -6,34 +6,50 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': '123456',
-    'database': 'notes_app'
 }
 
 # Database connection
 def connect_db():
     try:
-        conn = mysql.connector.connect(**db_config)
-        return conn
+        mydb = mysql.connector.connect(**db_config)
+        create_database(mydb)
+        return mydb
     except mysql.connector.Error as err:
-        messagebox.showerror("Database Error", f"Error: {err}")
+        return None
+
+def create_database(mydb):
+    try:
+        cursor = mydb.cursor()
+        query = """
+            CREATE DATABASE IF NOT EXISTS notes_app
+        """
+        cursor.execute(query)
+        cursor.execute("use notes_app")
+    except mysql.connector.Error as err:
         return None
 
 def create_table(table_name):
-    conn = connect_db()
-    if conn:
+    mydb = connect_db()
+    if mydb:
         try:
-            cursor = conn.cursor()
+            cursor = mydb.cursor()
             cursor.execute(f"""
                 CREATE TABLE IF NOT EXISTS {table_name} (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    title VARCHAR(255) NOT NULL,
-                    content TEXT NOT NULL
+                    id int auto_increment primary key,
+                    name nvarchar(100) NOT NULL,
+                    description nvarchar(100),
+                    category nvarchar(100),
+                    date nvarchar(100),
+                    time nvarchar(100),
+                    priority varchar(100),
+                    image varchar(100),
+                    status varchar(100)
                 )
             """)
-            conn.commit()
+            mydb.commit()
         except IOError as err:
             messagebox.showerror("Database Error", f"Error creating table: {err}")
         finally:
-            conn.close()
+            mydb.close()
 
 create_table("notes")
