@@ -25,9 +25,15 @@ def create_table(table_name):
             cursor = conn.cursor()
             cursor.execute(f"""
                 CREATE TABLE IF NOT EXISTS {table_name} (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    title VARCHAR(255) NOT NULL,
-                    content TEXT NOT NULL
+                    id int auto_increment primary key,
+                    name nvarchar(100) NOT NULL,
+                    description nvarchar(100),
+                    category nvarchar(100),
+                    date nvarchar(100),
+                    time nvarchar(100),
+                    priority varchar(100),
+                    image varchar(100),
+                    status varchar(100)
                 )
             """)
             conn.commit()

@@ -19,15 +19,16 @@ def load_notes():
     conn = connect_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT id, title FROM notes")
+        cursor.execute("SELECT id, name, description, category, date, time, priority, image, status FROM notes")
         notes = cursor.fetchall()
         conn.close()
         return notes
+    else:
+        return []
 
 # Delete selected note
 def delete_note(note_id):
     if not note_id:
-        messagebox.showwarning("Selection Error", "No note selected.")
         return
 
     conn = connect_db()

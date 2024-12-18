@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import mysql.connector
 
+from Backend.controller.main import load_notes
+
+
 class MainScreen(tk.Frame):
     def __init__(self, controller):
         super().__init__(controller.root)
@@ -105,17 +108,7 @@ class MainScreen(tk.Frame):
         self.load_data()
 
     def load_data(self):
-        # Kết nối cơ sở dữ liệu và lấy dữ liệu
-        db = mysql.connector.connect(
-            host="127.0.0.1",
-            username="admin",
-            password="Ocean123"
-        )
-        cursor = db.cursor()
-        cursor.execute("use BTL_PythonNC")
-        cursor.execute("SELECT name, description, category, date, time, priority, status FROM NOTE")  # Câu SQL
-        rows = cursor.fetchall()
-        db.close()
+        rows = load_notes()
 
         # Xóa dữ liệu cũ trong Treeview
         for row in self.tree.get_children():
