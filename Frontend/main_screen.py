@@ -66,7 +66,7 @@ class MainScreen(tk.Frame):
         table_frame = tk.Frame(self, bg="white", padx=10, pady=10)
         table_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-        self.tree = ttk.Treeview(table_frame, columns=("Task", "Description", "Category", "When","Time" , "Priority", "Status"), show="headings")
+        self.tree = ttk.Treeview(table_frame, columns=("Task", "Description", "Category", "When","Time" , "Priority", "Status", "Image"), show="headings")
         self.tree.heading("Task", text="Name")
         self.tree.heading("Description", text="Description")
         self.tree.heading("Category", text="Category")
@@ -74,6 +74,7 @@ class MainScreen(tk.Frame):
         self.tree.heading("Time", text="Time")
         self.tree.heading("Priority", text="Priority")
         self.tree.heading("Status", text="Status")
+        self.tree.heading("Image", text="Image")
 
         # Column Widths
         self.tree.column("Task", width=120, anchor="w")
@@ -82,6 +83,7 @@ class MainScreen(tk.Frame):
         self.tree.column("When", width=100, anchor="w")
         self.tree.column("Time", width=100, anchor="w")
         self.tree.column("Priority", width=100, anchor="w")
+        self.tree.column("Image", width=100, anchor="w")
 
         # for task in tasks:
         #     self.tree.insert("", "end", values=task)
@@ -113,7 +115,7 @@ class MainScreen(tk.Frame):
         )
         cursor = db.cursor()
         cursor.execute("use BTL_PythonNC")
-        cursor.execute("SELECT name, description, category, date, time, priority, status FROM NOTE")  # Câu SQL
+        cursor.execute("SELECT name, description, category, date, time, priority, status, image FROM NOTE")  # Câu SQL
         rows = cursor.fetchall()
         db.close()
 
@@ -142,7 +144,7 @@ class MainScreen(tk.Frame):
             "priority": selected_values[5],
             "status": selected_values[6],
         }
-
+        print(task_data)
         # Gửi dữ liệu tới EditScreen
         self.controller.show_frame("EditTodoScreen", data=task_data)
 
