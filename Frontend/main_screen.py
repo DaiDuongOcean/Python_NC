@@ -3,8 +3,9 @@ from tkinter import ttk
 from tkinter import  messagebox
 import mysql.connector
 
-from Backend.controller.main import load_notes, update_note
-from Frontend.util import CATEGORIES, PRIORITY, STATUS, get_cols, get_col_index_by_name, convert_from_list_to_dict
+from Python_NC.Backend.controller.main import update_note, load_notes
+from Python_NC.Frontend.util import get_col_index_by_name, STATUS, convert_from_list_to_dict, CATEGORIES, PRIORITY, \
+    get_cols
 
 
 def toggle_checkbox(item_id, tree):
@@ -123,10 +124,10 @@ class MainScreen(tk.Frame):
         edit_button.pack(side="left", padx=10)
         delete_button.pack(side="left", padx=10)
         self.tree.bind("<Button-1>", lambda event: on_click(event, self.tree))
+
     def update_screen(self, target_screen=None):
         """Cập nhật dữ liệu khi màn hình được hiển thị."""
         # Chỉ reset dữ liệu khi chuyển sang AddTodoScreen
-        #if target_screen == "AddTodoScreen":
         self.load_data()
 
     def load_data(self):
@@ -158,4 +159,3 @@ class MainScreen(tk.Frame):
 
     def search_action(self):
         print("Search action executed")
-

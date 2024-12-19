@@ -4,8 +4,8 @@ from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 import mysql.connector
 
-from Backend.controller.main import add_note
-from Frontend.util import CATEGORIES, PRIORITY
+from Python_NC.Backend.controller.main import add_note
+from Python_NC.Frontend.util import PRIORITY, CATEGORIES
 
 bg_color = "#4A90E2"
 
