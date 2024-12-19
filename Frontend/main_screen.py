@@ -2,38 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import  messagebox
 import mysql.connector
-
+from functools import partial
 from Backend.controller.main import load_notes, update_note
 from Frontend.util import CATEGORIES, PRIORITY, STATUS, get_cols, get_col_index_by_name, convert_from_list_to_dict
-
-
-def toggle_checkbox(item_id, tree):
-    tree.selection_set(item_id)
-    selected_item = tree.selection()
-    if selected_item:
-        row_values = list(tree.item(selected_item, "values"))
-        col_index = get_col_index_by_name("Status")
-        current_value = tree.item(item_id, "values")[col_index]
-        if current_value == STATUS["Uncomplete"]:
-            new_value = STATUS["Completed"]
-        else:
-            new_value = STATUS["Uncomplete"]
-        row_values[col_index] = new_value
-        tree.item(item_id, values=row_values)
-        note_info = convert_from_list_to_dict(row_values)
-        update_note(note_info)
-        messagebox.showinfo(title="Success", message="Update status successfully")
-
-def on_click(event, tree):
-    """Handle clicks on the Treeview to toggle checkboxes."""
-    region = tree.identify("region", event.x, event.y)
-    if region == "cell":  # Check if the click is inside a cell
-        column = tree.identify_column(event.x)
-        col_index = get_col_index_by_name("Status")
-        if column == f"#{col_index + 1}":  # If the click is in the 'Checkbox' column
-            row_id = tree.identify_row(event.y)
-            if row_id:  # Ensure a valid row is clicked
-                toggle_checkbox(row_id, tree)
 
 class MainScreen(tk.Frame):
     def __init__(self, controller):
@@ -41,6 +12,12 @@ class MainScreen(tk.Frame):
         self.controller = controller
         self.configure(bg="#4A90E2")
         self.pack(fill="both", expand=True)
+        self.filter = {
+            'status': "All",
+            'category': "All",
+            'priority': "All"
+        }
+        self.search = ""
 
         main_title = tk.Label(self, text="Note List", font=("sans 18 bold"), bg="#4A90E2", fg="white")
         main_title.pack(pady=20)
@@ -62,21 +39,23 @@ class MainScreen(tk.Frame):
         status_options = ["All", *STATUS]
         self.status_var = tk.StringVar(nav_frame)
         self.status_var.set("Status")
-        status_menu = tk.OptionMenu(nav_frame, self.status_var, *status_options)
+        status_menu = tk.OptionMenu(nav_frame, self.status_var, *status_options, command=partial(
+            self.on_select_option_menu, 'status'))
         status_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         status_menu.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
         task_options = ["All", *CATEGORIES]
         self.task_var = tk.StringVar(nav_frame)
         self.task_var.set("Category")
-        task_menu = tk.OptionMenu(nav_frame, self.task_var, *task_options)
+        task_menu = tk.OptionMenu(nav_frame, self.task_var, *task_options, command=partial(self.on_select_option_menu, 'category'))
         task_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         task_menu.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
 
         priority_options = ["All", *PRIORITY]
         self.priority_var = tk.StringVar(nav_frame)
         self.priority_var.set("Priority")
-        priority_menu = tk.OptionMenu(nav_frame, self.priority_var, *priority_options)
+        priority_menu = tk.OptionMenu(nav_frame, self.priority_var, *priority_options, command=partial(
+            self.on_select_option_menu, 'priority'))
         priority_menu.config(font=("sans 10"), bg="white", fg="#4A90E2")
         priority_menu.grid(row=0, column=4, padx=5, pady=5, sticky="ew")
 
@@ -122,7 +101,40 @@ class MainScreen(tk.Frame):
 
         edit_button.pack(side="left", padx=10)
         delete_button.pack(side="left", padx=10)
-        self.tree.bind("<Button-1>", lambda event: on_click(event, self.tree))
+        self.tree.bind("<Button-1>", lambda event: self.on_click(event))
+
+    def toggle_checkbox(self, item_id):
+        self.tree.selection_set(item_id)
+        selected_item = self.tree.selection()
+        if selected_item:
+            row_values = list(self.tree.item(selected_item, "values"))
+            col_index = get_col_index_by_name("Status")
+            current_value = self.tree.item(item_id, "values")[col_index]
+            if current_value == STATUS["Uncomplete"]:
+                new_value = STATUS["Completed"]
+            else:
+                new_value = STATUS["Uncomplete"]
+            row_values[col_index] = new_value
+            self.tree.item(item_id, values=row_values)
+            note_info = convert_from_list_to_dict(row_values)
+            update_note(note_info)
+            messagebox.showinfo(title="Success", message="Update status successfully")
+
+    def on_click(self, event):
+        """Handle clicks on the Treeview to toggle checkboxes."""
+        region = self.tree.identify("region", event.x, event.y)
+        if region == "cell":  # Check if the click is inside a cell
+            column = self.tree.identify_column(event.x)
+            col_index = get_col_index_by_name("Status")
+            if column == f"#{col_index + 1}":  # If the click is in the 'Checkbox' column
+                row_id = self.tree.identify_row(event.y)
+                if row_id:  # Ensure a valid row is clicked
+                    self.toggle_checkbox(row_id)
+
+    def on_select_option_menu(self, attribute, value):
+        self.filter[f"{attribute}"] = value
+        self.update_screen()
+
     def update_screen(self, target_screen=None):
         """Cập nhật dữ liệu khi màn hình được hiển thị."""
         # Chỉ reset dữ liệu khi chuyển sang AddTodoScreen
@@ -130,7 +142,9 @@ class MainScreen(tk.Frame):
         self.load_data()
 
     def load_data(self):
-        rows = load_notes()
+        filter_val = self.filter
+        search_val = self.search
+        rows = load_notes(filter_val, search_val)
 
         # Xóa dữ liệu cũ trong Treeview
         for row in self.tree.get_children():
@@ -158,4 +172,5 @@ class MainScreen(tk.Frame):
 
     def search_action(self):
         print("Search action executed")
+
 

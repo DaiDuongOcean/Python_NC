@@ -1,6 +1,4 @@
 import tkinter as tk
-
-from Backend.controller.main import load_notes
 from Frontend.notice_time import notice_time
 from controller import Controller
 
