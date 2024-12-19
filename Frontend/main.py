@@ -1,4 +1,7 @@
 import tkinter as tk
+
+from Backend.controller.main import load_notes
+from Frontend.notice_time import notice_time
 from controller import Controller
 
 def main():
@@ -7,6 +10,7 @@ def main():
     root.geometry("900x550")
     root.configure(bg="#4A90E2")
     app = Controller(root)  # Pass the root window to the controller
+    notice_time()
     root.mainloop()
 
 if __name__ == "__main__":
