@@ -17,7 +17,6 @@ class MainScreen(tk.Frame):
             'category': "All",
             'priority': "All"
         }
-        self.search = ""
 
         main_title = tk.Label(self, text="Note List", font=("sans 18 bold"), bg="#4A90E2", fg="white")
         main_title.pack(pady=20)
@@ -67,8 +66,8 @@ class MainScreen(tk.Frame):
         search_frame = tk.Frame(nav_frame, bg="#4A90E2")
         search_frame.grid(row=0, column=6, padx=(20, 20), pady=5, sticky="ew")
 
-        search_entry = tk.Entry(search_frame, font=("sans 12 bold"), width=30)
-        search_entry.pack(side="left", ipady=5, padx=5)
+        self.search_entry = tk.Entry(search_frame, font=("sans 12 bold"), width=30)
+        self.search_entry.pack(side="left", ipady=5, padx=5)
 
         search_button = tk.Button(search_frame, text="🔍", font=("sans 12 bold"), bg="white", fg="#4A90E2",
                                   command=self.search_action)
@@ -143,7 +142,7 @@ class MainScreen(tk.Frame):
 
     def load_data(self):
         filter_val = self.filter
-        search_val = self.search
+        search_val = self.search_entry.get()
         rows = load_notes(filter_val, search_val)
 
         # Xóa dữ liệu cũ trong Treeview
@@ -171,6 +170,6 @@ class MainScreen(tk.Frame):
         print("Delete Task")
 
     def search_action(self):
-        print("Search action executed")
+        self.update_screen()
 
 

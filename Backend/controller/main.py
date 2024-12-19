@@ -12,7 +12,7 @@ def save_note(title, content):
         mydb.close()
         messagebox.showinfo("Success", "Note saved successfully!")
 
-def load_notes(filter_val = None, search_val = None):
+def load_notes(filter_val = None, search_val = ""):
     mydb = connect_db()
     if mydb:
         cursor = mydb.cursor()
@@ -27,6 +27,10 @@ def load_notes(filter_val = None, search_val = None):
                     if len(condition_str) > 0:
                         condition_str += "and"
                     condition_str += f" {key} = '{value}' "
+        if len(search_val.strip()) > 0:
+            if len(condition_str) > 0:
+                condition_str += " and "
+            condition_str +=  f"name LIKE \'%{search_val.strip()}%\'"
         if len(condition_str) > 0:
            query = f"""
                 SELECT * 
@@ -93,15 +97,6 @@ def delete_note(note_id):
         mydb.commit()
         mydb.close()
 
-def search_note(name):
-    if len(name.strip()) < 0:
-        return
-    mydb = connect_db()
-    if mydb:
-        cursor = mydb.cursor()
-        cursor.execute(f"SELECT * FROM notes WHERE name LIKE \'%{name}%\'")
-        note = cursor.fetchall()
-        return note
 
 def get_note(id):
     if not id:
