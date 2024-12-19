@@ -122,10 +122,11 @@ class EditTodoScreen(tk.Frame):
                     elif isinstance(entry, ttk.Combobox):
                         entry.set(value)
 
-            item = get_note(self.data['id'])
-            img_index = get_col_index_by_name("Image")
-            self.file_label.config(text=item[img_index].split('/')[-1])
-            image = Image.open(f"C:\\Users\\Admin\\Downloads\\img.png")
+            print(self.data)
+            # item = get_note(self.data['id'])
+            # img_index = get_col_index_by_name("Image")
+            self.file_label.config(text=self.data['image'].split('/')[-1])
+            image = Image.open(f"C:\\Users\\Admin\\Downloads\\{self.data['image']}")
             image = image.resize((150, 150))
             photo = ImageTk.PhotoImage(image)
             self.image_preview.config(image=photo)

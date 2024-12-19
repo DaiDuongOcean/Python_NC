@@ -109,9 +109,6 @@ class MainScreen(tk.Frame):
         for col in cols:
             self.tree.column(col['name'], width=col['width'], anchor="w")
 
-        # for task in tasks:
-        #     self.tree.insert("", "end", values=task)
-
         self.tree.pack(fill="both", expand=True)
 
         # Action buttons
