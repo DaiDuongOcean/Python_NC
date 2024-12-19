@@ -3,9 +3,11 @@ import tkinter as tk
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 import mysql.connector
+import os
 
 from Backend.controller.main import get_note, update_note
-from Frontend.util import get_col_index_by_name
+from Frontend.add_screen import imgs_folder
+from Frontend.util import get_col_index_by_name, is_image_file_in_folder
 
 bg_color = "#4A90E2"
 
@@ -124,12 +126,17 @@ class EditTodoScreen(tk.Frame):
 
             item = get_note(self.data['id'])
             img_index = get_col_index_by_name("Image")
-            self.file_label.config(text=item[img_index].split('/')[-1])
-            image = Image.open(f"C:\\Users\\Admin\\Downloads\\img.png")
-            image = image.resize((150, 150))
-            photo = ImageTk.PhotoImage(image)
-            self.image_preview.config(image=photo)
-            self.image_preview.image = photo
+            img_name = item[img_index]
+            available_img = is_image_file_in_folder(imgs_folder, img_name)
+            if available_img:
+                self.file_label.config(text=img_name)
+                input_path = os.path.join(imgs_folder, img_name)
+                image = Image.open(input_path)
+                image = image.resize((150, 150))
+                photo = ImageTk.PhotoImage(image)
+                self.image_preview.config(image=photo)
+                self.image_preview.image = photo
+
 
     def open_time_picker(self, event):
         popup = tk.Toplevel(self)
@@ -203,7 +210,7 @@ class EditTodoScreen(tk.Frame):
             time = self.entries["Time"].get()
             priority = self.entries["Priority"].get()
             image = self.file_label.cget("text") if self.file_label.cget("text") != "No file chosen" else None
-            status = "Pending"
+            status = self.data['status']
 
             if not name or not description or not category or not date or not time or not priority:
                 messagebox.showerror("Error", "All fields except attachment are required.")

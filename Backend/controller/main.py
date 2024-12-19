@@ -12,11 +12,34 @@ def save_note(title, content):
         mydb.close()
         messagebox.showinfo("Success", "Note saved successfully!")
 
-def load_notes():
+def load_notes(filter_val = None, search_val = ""):
     mydb = connect_db()
     if mydb:
         cursor = mydb.cursor()
-        cursor.execute("SELECT id, name, description, category, date, time, priority, image, status FROM notes")
+        condition_str = ""
+        if filter_val != None:
+            items = list(filter_val.items())
+            for item_index in range(len(items)):
+                item = items[item_index]
+                key = item[0]
+                value = item[1]
+                if value != "All":
+                    if len(condition_str) > 0:
+                        condition_str += "and"
+                    condition_str += f" {key} = '{value}' "
+        if len(search_val.strip()) > 0:
+            if len(condition_str) > 0:
+                condition_str += " and "
+            condition_str +=  f"name LIKE \'%{search_val.strip()}%\'"
+        if len(condition_str) > 0:
+           query = f"""
+                SELECT * 
+                FROM notes
+                WHERE {condition_str}
+            """
+        else:
+            query = "SELECT * FROM notes"
+        cursor.execute(query)
         notes = cursor.fetchall()
         mydb.close()
         return notes
@@ -74,15 +97,6 @@ def delete_note(note_id):
         mydb.commit()
         mydb.close()
 
-def search_note(name):
-    if len(name.strip()) < 0:
-        return
-    mydb = connect_db()
-    if mydb:
-        cursor = mydb.cursor()
-        cursor.execute(f"SELECT * FROM notes WHERE name LIKE \'%{name}%\'")
-        note = cursor.fetchall()
-        return note
 
 def get_note(id):
     if not id:
