@@ -19,6 +19,7 @@ class EditTodoScreen(tk.Frame):
         self.pack(fill="both", expand=True)
 
         self.data = None  # Placeholder for task data
+        self.popup_set_time = None
 
     def set_up(self, data=None):
         self.data = data  # Receive the task data to edit
@@ -139,7 +140,10 @@ class EditTodoScreen(tk.Frame):
 
 
     def open_time_picker(self, event):
+        if self.popup_set_time != None:
+            self.popup_set_time.destroy()
         popup = tk.Toplevel(self)
+        self.popup_set_time = popup
         popup.title("Select Time")
         popup.geometry("150x150")
         popup.configure(bg="#2F2F2F")
