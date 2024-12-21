@@ -19,9 +19,10 @@ def is_current_datetime_matching(date_str, time_str):
     now = datetime.now()
     return now.date() == target_date.date() and now.time().hour == target_time.time().hour and now.time().minute == target_time.time().minute
 
-def notify_when_time_matches(notes):
+def notify_when_time_matches():
     def check_time():
         while True:
+            notes = load_notes()
             for note in notes:
                 dict_note = convert_from_list_to_dict(note)
                 note_date = dict_note['date']
@@ -88,5 +89,4 @@ def create_note_box(note):
     window.mainloop()
 
 def notice_time():
-    notes = load_notes()
-    notify_when_time_matches(notes)
+    notify_when_time_matches()
