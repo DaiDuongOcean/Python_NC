@@ -21,6 +21,83 @@ class EditTodoScreen(tk.Frame):
         self.data = None  # Placeholder for task data
         self.popup_set_time = None
 
+    # def set_up(self, data=None):
+    #     self.data = data  # Receive the task data to edit
+    #     self.clear_screen()  # Clear the screen before setting up new data
+    #
+    #     # Add note form container
+    #     add_todo_content = tk.Frame(self, bg=bg_color, padx=20, pady=20)
+    #     add_todo_content.place(relx=0.5, rely=0.5, anchor="center", width=450, height=600)
+    #
+    #     # Title
+    #     title_label = tk.Label(add_todo_content, text="Edit Note", font=("Arial", 16, "bold"), bg=bg_color, fg="white")
+    #     title_label.grid(row=0, column=0, columnspan=2, pady=(15, 15))
+    #
+    #     # Fields for task details
+    #     fields = [
+    #         ("Name", None),
+    #         ("Description", None),
+    #         ("Category", ["Cate 1", "Cate 2", "Cate 3"]),
+    #         ("Date", None),
+    #         ("Time", None),
+    #         ("Priority", ["Low", "Medium", "High"]),
+    #     ]
+    #
+    #     self.entries = {}
+    #     for i, (field, options) in enumerate(fields):
+    #         label = tk.Label(add_todo_content, text=field, font=("Arial", 10), bg=bg_color, fg="white")
+    #         label.grid(row=i + 1, column=0, sticky="w", padx=10, pady=5)
+    #
+    #         if options is None:
+    #             if field == "Date":
+    #                 entry = DateEntry(add_todo_content, font=("Arial", 10), background="darkblue",
+    #                                   foreground="white", borderwidth=2, state="readonly")
+    #             elif field == "Time":
+    #                 entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
+    #                                  insertbackground="black")
+    #                 entry.bind("<Button-1>", self.open_time_picker)
+    #             else:
+    #                 entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
+    #                                  insertbackground="black")
+    #             entry.grid(row=i + 1, column=1, sticky="ew", padx=10, pady=5)
+    #             self.entries[field] = entry
+    #         else:
+    #             combo = ttk.Combobox(add_todo_content, values=options, font=("Arial", 10))
+    #             combo.grid(row=i + 1, column=1, sticky="ew", padx=10, pady=5)
+    #             self.entries[field] = combo
+    #
+    #     add_todo_content.columnconfigure(1, weight=1)
+    #
+    #     # File Chooser
+    #     file_label = tk.Label(add_todo_content, text="Attachment", font=("Arial", 10), bg=bg_color, fg="white")
+    #     file_label.grid(row=len(fields) + 1, column=0, sticky="w", padx=10, pady=5)
+    #
+    #     file_button = tk.Button(add_todo_content, text="Choose File", bg="#4A90E2", fg="white", font=("Arial", 10),
+    #                             command=self.choose_file)
+    #     file_button.grid(row=len(fields) + 1, column=1, sticky="w", padx=10, pady=5)
+    #
+    #     self.file_label = tk.Label(add_todo_content, text="No file chosen", font=("Arial", 10), bg=bg_color, fg="white")
+    #     self.file_label.grid(row=len(fields) + 2, column=0, columnspan=2, sticky="w", padx=10, pady=5)
+    #
+    #     # Image Preview
+    #     self.image_preview = tk.Label(self, bg=bg_color)
+    #     self.image_preview.place(relx=0.5, rely=0.85, anchor="center")
+    #
+    #     # Buttons
+    #     button_frame = tk.Frame(add_todo_content, bg=bg_color)
+    #     button_frame.grid(row=len(fields) + 3, column=0, columnspan=2, pady=10)
+    #
+    #     add_button = tk.Button(button_frame, text="Save", font=("Arial", 12), bg="green", fg="white", width=10,
+    #                            command=self.edit_note)
+    #     add_button.pack(side="left", padx=10)
+    #
+    #     cancel_button = tk.Button(button_frame, text="Cancel", font=("Arial", 12), bg="gray", fg="white", width=10,
+    #                               command=lambda: self.controller.show_frame("MainScreen"))
+    #     cancel_button.pack(side="left", padx=10)
+    #
+    #     # Fill in fields with existing data
+    #     self.fill_fields_with_data()
+
     def set_up(self, data=None):
         self.data = data  # Receive the task data to edit
         self.clear_screen()  # Clear the screen before setting up new data
@@ -51,11 +128,12 @@ class EditTodoScreen(tk.Frame):
             if options is None:
                 if field == "Date":
                     entry = DateEntry(add_todo_content, font=("Arial", 10), background="darkblue", foreground="white",
-                                      borderwidth=2)
+                                      borderwidth=2, state="readonly")  # Prevent typing
                 elif field == "Time":
                     entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
                                      insertbackground="black")
                     entry.bind("<Button-1>", self.open_time_picker)
+                    entry.bind("<KeyPress>", lambda e: "break")  # Prevent typing
                 else:
                     entry = tk.Entry(add_todo_content, font=("Arial", 10), bg="white", fg="black",
                                      insertbackground="black")
