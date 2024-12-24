@@ -286,7 +286,7 @@ class MainScreen(tk.Frame):
 
         # Search section (pushed to the right)
         search_frame = tk.Frame(nav_frame, bg="#4A90E2")
-        search_frame.grid(row=0, column=6, padx=(20, 20), pady=5, sticky="ew")
+        search_frame.grid(row=0, column=6, padx=(20, 20), pady=5, sticky="e")
 
         self.search_entry = tk.Entry(search_frame, font=("sans 12 bold"), width=30)
         self.search_entry.pack(side="left", ipady=5, padx=5)
