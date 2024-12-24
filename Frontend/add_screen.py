@@ -3,11 +3,13 @@ from tkinter import messagebox, ttk, filedialog
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 import mysql.connector
-
-from Python_NC.Backend.controller.main import add_note
-from Python_NC.Frontend.util import PRIORITY, CATEGORIES
+import os
+from Backend.controller.main import add_note
+from Frontend.util import CATEGORIES, PRIORITY
 
 bg_color = "#4A90E2"
+imgs_folder = "../Img"
+os.makedirs(imgs_folder, exist_ok=True)
 
 class AddTodoScreen(tk.Frame):
     def __init__(self, controller):
@@ -15,6 +17,7 @@ class AddTodoScreen(tk.Frame):
         self.controller = controller
         self.configure(bg="#2F2F2F")
         self.pack(fill="both", expand=True)
+        self.popup_set_time = None
 
     def set_up(self):
         # Add note form container
@@ -92,7 +95,10 @@ class AddTodoScreen(tk.Frame):
         cancel_button.pack(side="left", padx=10)
 
     def open_time_picker(self, event):
+        if self.popup_set_time != None:
+            self.popup_set_time.destroy()
         popup = tk.Toplevel(self)
+        self.popup_set_time = popup
         popup.title("Select Time")
         popup.geometry("150x110")
         popup.configure(bg="#2F2F2F")
@@ -145,6 +151,7 @@ class AddTodoScreen(tk.Frame):
             try:
                 image = Image.open(filename)
                 image = image.resize((150, 150))
+                self.image = image
                 photo = ImageTk.PhotoImage(image)
                 self.image_preview.config(image=photo)
                 self.image_preview.image = photo
@@ -176,6 +183,10 @@ class AddTodoScreen(tk.Frame):
                 'image': image,
                 'status': status
             }
+            # Save image to local folder
+            if image != None:
+                file_path = os.path.join(imgs_folder, image)
+                self.image.save(file_path)
             add_note(note_info)
             # Thông báo thành công
             messagebox.showinfo("Success", "Note added successfully!")

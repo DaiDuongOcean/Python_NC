@@ -1,3 +1,5 @@
+import os
+
 CATEGORIES = {
     "Personal": "Personal",
     "Work": "Work",
@@ -75,3 +77,15 @@ def convert_from_list_to_dict(list_val):
     for index in range(len(cols_name)):
         dict[f"{cols_name[index]}"] = list_val[index]
     return dict
+
+def is_image_file_in_folder(folder_path, image_name):
+    # Convert image name to lowercase to handle case-insensitivity
+    if image_name == None:
+        return False
+    image_name = image_name.lower()
+
+    # Check if the folder contains a file with the given image name
+    for file_name in os.listdir(folder_path):
+        if file_name.lower() == image_name:
+            return True
+    return False

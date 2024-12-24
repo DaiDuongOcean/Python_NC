@@ -3,9 +3,11 @@ import tkinter as tk
 from tkcalendar import DateEntry
 from PIL import Image, ImageTk
 import mysql.connector
+import os
 
-from Python_NC.Backend.controller.main import get_note, update_note
-from Python_NC.Frontend.util import get_col_index_by_name
+from Backend.controller.main import get_note, update_note
+from Frontend.add_screen import imgs_folder
+from Frontend.util import get_col_index_by_name, is_image_file_in_folder
 
 bg_color = "#4A90E2"
 
@@ -17,6 +19,7 @@ class EditTodoScreen(tk.Frame):
         self.pack(fill="both", expand=True)
 
         self.data = None  # Placeholder for task data
+        self.popup_set_time = None
 
     def set_up(self, data=None):
         self.data = data  # Receive the task data to edit
@@ -122,18 +125,25 @@ class EditTodoScreen(tk.Frame):
                     elif isinstance(entry, ttk.Combobox):
                         entry.set(value)
 
-            print(self.data)
-            # item = get_note(self.data['id'])
-            # img_index = get_col_index_by_name("Image")
-            self.file_label.config(text=self.data['image'].split('/')[-1])
-            image = Image.open(f"C:\\Users\\Admin\\Downloads\\{self.data['image']}")
-            image = image.resize((150, 150))
-            photo = ImageTk.PhotoImage(image)
-            self.image_preview.config(image=photo)
-            self.image_preview.image = photo
+            item = get_note(self.data['id'])
+            img_index = get_col_index_by_name("Image")
+            img_name = item[img_index]
+            available_img = is_image_file_in_folder(imgs_folder, img_name)
+            if available_img:
+                self.file_label.config(text=img_name)
+                input_path = os.path.join(imgs_folder, img_name)
+                image = Image.open(input_path)
+                image = image.resize((150, 150))
+                photo = ImageTk.PhotoImage(image)
+                self.image_preview.config(image=photo)
+                self.image_preview.image = photo
+
 
     def open_time_picker(self, event):
+        if self.popup_set_time != None:
+            self.popup_set_time.destroy()
         popup = tk.Toplevel(self)
+        self.popup_set_time = popup
         popup.title("Select Time")
         popup.geometry("150x150")
         popup.configure(bg="#2F2F2F")
@@ -204,7 +214,7 @@ class EditTodoScreen(tk.Frame):
             time = self.entries["Time"].get()
             priority = self.entries["Priority"].get()
             image = self.file_label.cget("text") if self.file_label.cget("text") != "No file chosen" else None
-            status = "Pending"
+            status = self.data['status']
 
             if not name or not description or not category or not date or not time or not priority:
                 messagebox.showerror("Error", "All fields except attachment are required.")
