@@ -162,7 +162,7 @@ class MainScreen(tk.Frame):
     def edit_task(self):
         selected_item = self.tree.selection()  # Lấy phần tử được chọn
         if not selected_item:
-            print("No item selected!")
+            messagebox.showerror("Error", "Please choose the note you wanna edit!")
             return
 
         # Lấy giá trị từ phần tử được chọn
@@ -173,18 +173,20 @@ class MainScreen(tk.Frame):
         self.controller.show_frame("EditTodoScreen", data=task_data)
 
     def delete_task(self):
-        confirm = messagebox.askyesno("Confirm", "Are you sure you want to delete this note?")
-        selected_item = self.tree.selection()  # Lấy phần tử được chọn
-        if not selected_item or not confirm:
-            print("No item selected!")
-            return
 
-        # Lấy giá trị từ phần tử được chọn
-        selected_values = self.tree.item(selected_item, "values")
-        task_data = convert_from_list_to_dict(selected_values)
-        delete_note(task_data['id'])
-        self.update_screen()
-        messagebox.showinfo("Success", "Your note was deleted successfully!!!")
+        selected_item = self.tree.selection()  # Lấy phần tử được chọn
+        if not selected_item :
+            messagebox.showerror("Error","Please choose the note you wanna delete!")
+            return
+        else:
+            confirm = messagebox.askyesno("Confirm", "Are you sure you want to delete this note?")
+            # Lấy giá trị từ phần tử được chọn
+            if confirm:
+                selected_values = self.tree.item(selected_item, "values")
+                task_data = convert_from_list_to_dict(selected_values)
+                delete_note(task_data['id'])
+                self.update_screen()
+                messagebox.showinfo("Success", "Your note was deleted successfully!!!")
 
     def search_action(self):
         self.update_screen()
