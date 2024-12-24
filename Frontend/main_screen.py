@@ -184,6 +184,7 @@ class MainScreen(tk.Frame):
         task_data = convert_from_list_to_dict(selected_values)
         delete_note(task_data['id'])
         self.update_screen()
+        messagebox.showinfo("Success", "Your note was deleted successfully!!!")
 
     def search_action(self):
         self.update_screen()
