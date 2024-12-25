@@ -46,7 +46,7 @@ def create_note_box(note):
     # Khởi tạo âm thanh
     try:
         mixer.init()
-        audio_file_path = "jingle-bells-278637.mp3"  # Đường dẫn đến file nhạc Giáng sinh
+        audio_file_path = "Happy New Year ( Lời Việt chúc mừng năm mới) _ NSND Thanh Hoa.mp3"  # Đường dẫn đến file nhạc Giáng sinh
         mixer.music.load(audio_file_path)
         mixer.music.play(-1)  # Phát nhạc lặp vô hạn
     except Exception as e:
