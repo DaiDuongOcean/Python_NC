@@ -209,7 +209,7 @@ class MainScreen(tk.Frame):
                 # Load the image using Pillow
                 image = Image.open(img_absolute_path)
                 # Resize the image if needed
-                image = image.resize((300, 300))
+                image = image.resize((250, 250))
                 # Convert the image to a PhotoImage object
                 photo = ImageTk.PhotoImage(image)
                 # Create a label to display the image
@@ -217,5 +217,25 @@ class MainScreen(tk.Frame):
                 label.image = photo  # Keep a reference to the image to prevent garbage collection
                 label.pack()
                 # Add a close button
-                close_button = tk.Button(popup, text="Close", command=popup.destroy)
+                close_button = tk.Button(popup, text="Close", command=popup.destroy, fg = "red")
                 close_button.pack()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
