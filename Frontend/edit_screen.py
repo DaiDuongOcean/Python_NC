@@ -37,10 +37,10 @@ class EditTodoScreen(tk.Frame):
         fields = [
             ("Name", None),
             ("Description", None),
-            ("Category", ["Cate 1", "Cate 2", "Cate 3"]),
+            ("Category", [*CATEGORIES]),
             ("Date", None),
             ("Time", None),
-            ("Priority", ["Low", "Medium", "High"]),
+            ("Priority", [*PRIORITY]),
         ]
 
         self.entries = {}
@@ -197,7 +197,6 @@ class EditTodoScreen(tk.Frame):
             try:
                 image = Image.open(filename)
                 image = image.resize((150, 150))
-                self.image = image
                 photo = ImageTk.PhotoImage(image)
                 self.image_preview.config(image=photo)
                 self.image_preview.image = photo
@@ -235,11 +234,6 @@ class EditTodoScreen(tk.Frame):
                     'image': image,
                     'status': status
                 }
-                # Save image to local folder
-                if image != None:
-                    file_path = os.path.join(imgs_folder, image)
-                    self.image.save(file_path)
-
                 update_note(note_info)
                 # Thông báo thành công
                 messagebox.showinfo("Success", "Note edited successfully!")

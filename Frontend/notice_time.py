@@ -46,7 +46,7 @@ def create_note_box(note):
     # Khởi tạo âm thanh
     try:
         mixer.init()
-        audio_file_path = "Happy New Year ( Lời Việt chúc mừng năm mới) _ NSND Thanh Hoa.mp3"  # Đường dẫn đến file nhạc Giáng sinh
+        audio_file_path = "jingle-bells-278637.mp3"
         mixer.music.load(audio_file_path)
         mixer.music.play(-1)  # Phát nhạc lặp vô hạn
     except Exception as e:
@@ -96,6 +96,9 @@ def create_note_box(note):
     # Nút đóng cửa sổ
     Button(window, text="Close", command=close_window, bg="red", fg="white", font=("Arial", 12)).pack(pady=20)
 
+    # Xử lý sự kiện khi đóng cửa sổ bằng dấu "X"
+    window.protocol("WM_DELETE_WINDOW", close_window)
+    
     # Bắt đầu vòng lặp giao diện
     window.mainloop()
 
